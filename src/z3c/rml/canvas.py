@@ -84,6 +84,13 @@ class DrawString(CanvasRMLDirective):
     signature = IDrawString
     callable = 'drawString'
 
+    def process(self):
+        kwargs = dict(self.getAttributeValues(attrMapping=self.attrMapping))
+        canvas = attr.getManager(self, interfaces.ICanvasManager).canvas
+        # Convert width and height to end locations
+        kwargs['text'] = kwargs['text'] % {'page_number': canvas.getPageNumber(), }
+        getattr(canvas, self.callable)(**kwargs)
+
 class IDrawRightString(IDrawString):
     """Draws a simple string (right aligned) onto the canvas at the specified
     location."""
